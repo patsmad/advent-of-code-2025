@@ -39,12 +39,6 @@ def assign_points(points, lines):
             in_points.append(point)
     return in_points, out_points
 
-def at_least_one_point(x1, y1, x2, y2, points):
-    for point in points:
-        if x1 <= point[0] <= x2 and y1 <= point[1] <= y2:
-            return True
-    return False
-
 def no_points(x1, y1, x2, y2, points):
     for point in points:
         if x1 <= point[0] <= x2 and y1 <= point[1] <= y2:
@@ -57,7 +51,7 @@ def get_largest_in_pair(tiles, sizes, in_points, out_points):
         x2, y2 = tiles[idy]
         x1, x2 = sorted([x1, x2])
         y1, y2 = sorted([y1, y2])
-        if no_points(x1, y1, x2, y2, out_points) and at_least_one_point(x1, y1, x2, y2, in_points):
+        if no_points(x1, y1, x2, y2, out_points):
             return sizes[idx, idy]
 
 
