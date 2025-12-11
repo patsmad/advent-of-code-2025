@@ -24,8 +24,8 @@ def get_points(tiles):
             points.append(((xs[idx] + xs[idx + 1]) / 2, (ys[idy] + ys[idy + 1]) / 2))
     return points
 
-def assign_points(points, lines):
-    in_points, out_points = [], []
+def get_out_points(points, lines):
+    out_points = []
     for point in points:
         num = 0
         for line in lines:
@@ -35,9 +35,7 @@ def assign_points(points, lines):
                 num += 1
         if num % 2 == 0:
             out_points.append(point)
-        else:
-            in_points.append(point)
-    return in_points, out_points
+    return out_points
 
 def no_points(x1, y1, x2, y2, points):
     for point in points:
@@ -45,7 +43,7 @@ def no_points(x1, y1, x2, y2, points):
             return False
     return True
 
-def get_largest_in_pair(tiles, sizes, in_points, out_points):
+def get_largest_in_pair(tiles, sizes, out_points):
     for idx, idy in sorted(sizes, key=lambda x: -sizes[x]):
         x1, y1 = tiles[idx]
         x2, y2 = tiles[idy]
@@ -79,8 +77,8 @@ def run(test: bool) -> None:
     # part 2
     lines = [(tiles[idx], tiles[idx + 1]) for idx in range(len(tiles) - 1)] + [(tiles[-1], tiles[0])]
     points = get_points(tiles)
-    in_points, out_points = assign_points(points, lines)
-    print(get_largest_in_pair(tiles, sizes, in_points, out_points))
+    out_points = get_out_points(points, lines)
+    print(get_largest_in_pair(tiles, sizes, out_points))
 
 
 if __name__ == '__main__':
