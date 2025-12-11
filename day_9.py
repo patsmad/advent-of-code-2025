@@ -16,6 +16,51 @@ def get_sizes(tiles):
             s[(idx, idy)] = (abs(x1 - x2) + 1) * (abs(y1 - y2) + 1)
     return s
 
+def get_points(tiles):
+    points = []
+    xs, ys = sorted(set([tile[0] for tile in tiles])), sorted(set([tile[1] for tile in tiles]))
+    for idx in range(len(xs) - 1):
+        for idy in range(len(ys) - 1):
+            points.append(((xs[idx] + xs[idx + 1]) / 2, (ys[idy] + ys[idy + 1]) / 2))
+    return points
+
+def assign_points(points, lines):
+    in_points, out_points = [], []
+    for point in points:
+        num = 0
+        for line in lines:
+            if (line[0][0] == line[1][0] and
+                    point[0] > line[0][0] and
+                    (line[0][1] <= point[1] <= line[1][1] or line[1][1] <= point[1] <= line[0][1])):
+                num += 1
+        if num % 2 == 0:
+            out_points.append(point)
+        else:
+            in_points.append(point)
+    return in_points, out_points
+
+def at_least_one_point(x1, y1, x2, y2, points):
+    for point in points:
+        if x1 <= point[0] <= x2 and y1 <= point[1] <= y2:
+            return True
+    return False
+
+def no_points(x1, y1, x2, y2, points):
+    for point in points:
+        if x1 <= point[0] <= x2 and y1 <= point[1] <= y2:
+            return False
+    return True
+
+def get_largest_in_pair(tiles, sizes, in_points, out_points):
+    for idx, idy in sorted(sizes, key=lambda x: -sizes[x]):
+        x1, y1 = tiles[idx]
+        x2, y2 = tiles[idy]
+        x1, x2 = sorted([x1, x2])
+        y1, y2 = sorted([y1, y2])
+        if no_points(x1, y1, x2, y2, out_points) and at_least_one_point(x1, y1, x2, y2, in_points):
+            return sizes[idx, idy]
+
+
 def run(test: bool) -> None:
     if not test:
         raw_input: str = get_input(day)
@@ -38,6 +83,10 @@ def run(test: bool) -> None:
     print(max(sizes.values()))
 
     # part 2
+    lines = [(tiles[idx], tiles[idx + 1]) for idx in range(len(tiles) - 1)] + [(tiles[-1], tiles[0])]
+    points = get_points(tiles)
+    in_points, out_points = assign_points(points, lines)
+    print(get_largest_in_pair(tiles, sizes, in_points, out_points))
 
 
 if __name__ == '__main__':
